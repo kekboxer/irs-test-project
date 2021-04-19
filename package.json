@@ -1,0 +1,28 @@
+{
+  "name": "irs-test-project",
+  "version": "1.0.0",
+  "description": "Test project for IRS",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "server": "nodemon app.js"
+  },
+  "keywords": [
+    "extreact",
+    "nodejs",
+    "postgresql"
+  ],
+  "author": "Andrey Kuznetsov <cuznetsofandrey@yandex.ru>",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.6",
+    "express": "^4.17.1",
+    "pg": "^8.6.0",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.6.2"
+  },
+  "devDependencies": {
+    "concurrently": "^6.0.2",
+    "nodemon": "^2.0.7"
+  }
+}
