@@ -1,34 +1,25 @@
 const express = require('express');
 const config = require('config');
-const { Sequelize, DataTypes } = require('sequelize');
+
+// Database
+const db = require('./config/database');
 
 const app = express();
 
 const PORT = config.get('port') || 5000;
 
-const db = new Sequelize('KPIS', config.get('db_username'), config.get('db_password'), {
-    host: 'localhost',
-    dialect: 'postgres',
-    define: {
-        timestamps: false
-    },
+const initModels = require('./models/init-models');
 
-    pool: {
-        max: 5,
-        min: 0,
-        idle: 10000
-    },
-});
+const models = initModels(db); // define models
 
-const R1022 = require('./models/R1022')(db, DataTypes); // define r1022 model
-
-db.authenticate() // check connection to database
+// Test connection to Database
+db.authenticate()
     .then(() => console.log('Database connected.'))
     .catch((e) => console.log('Error', e.message));
 
 db.sync()
 
-R1022.findAll({where:{utv: "1"}, raw: true })
+models.R1022.findAll({where:{utv: "1"}, raw: true })
     .then(res=>{
         console.log(res);
     }).catch(err=>console.log(err));
