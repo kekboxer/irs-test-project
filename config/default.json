@@ -1,5 +1,6 @@
 {
   "port": 5000,
   "db_username": "postgres",
-  "db_password": "root936719"
+  "db_password": "root936719",
+  "secret_key": "irs_secret_key"
 }
