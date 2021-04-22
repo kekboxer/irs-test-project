@@ -17,21 +17,26 @@ const dataBase = require('./config/database');
 
 // Define models
 const initModels = require('./models/init-models');
-module.exports = initModels(dataBase);
+const models = initModels(dataBase);
+module.exports.models = models;
 
 // Connect session store and passport
 app.use(sessionMiddleware);
+app.use(cookieParser(config.get("cookie_key")));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+    cors({
+        origin: "http://localhost:3000", // <-- location of the react app were connecting to
+        credentials: true,
+    })
+);
+
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(
-    cors({
-    origin: "http://localhost:3000",
-    credentials: true
-})
-);
+
+module.exports.passport = passport;
 
 app.use('/api/auth', require('./routes/auth.routes'));
 
