@@ -1,11 +1,13 @@
 const express = require('express');
 const config = require('config');
 const bodyParser = require('body-parser');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 // const sequelize = require('sequelize');
 // const { Op } = require("sequelize");
 
-const passport = require('./config/passport');
 const sessionMiddleware = require('./config/session');
 
 const app = express();
@@ -21,7 +23,15 @@ module.exports = initModels(dataBase);
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+require('./config/passport')(passport);
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(
+    cors({
+    origin: "http://localhost:3000",
+    credentials: true
+})
+);
 
 app.use('/api/auth', require('./routes/auth.routes'));
 
