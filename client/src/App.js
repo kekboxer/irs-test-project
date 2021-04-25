@@ -1,79 +1,20 @@
-
-import React, { useState } from "react";
-import Axios from "axios";
+import React from "react";
+import { useRoutes } from './routes';
+import { BrowserRouter as Router } from 'react-router-dom';
+import {useAuth} from "./auth.hook";
+import {AuthContext} from "./context/AuthContext";
 
 function App() {
-    const [registerUsername, setRegisterUsername] = useState("");
-    const [registerPassword, setRegisterPassword] = useState("");
-    const [loginUsername, setLoginUsername] = useState("");
-    const [loginPassword, setLoginPassword] = useState("");
-    const [data, setData] = useState(null);
-    const register = () => {
-        Axios({
-            method: "POST",
-            data: {
-                email: registerUsername,
-                password: registerPassword,
-            },
-            withCredentials: true,
-            url: "http://localhost:5000/api/auth/register",
-        }).then((res) => console.log(res));
-    };
-    const login = () => {
-        Axios({
-            method: "POST",
-            data: {
-                email: loginUsername,
-                password: loginPassword,
-            },
-            withCredentials: true,
-            url: "http://localhost:5000/api/auth/login",
-        }).then((res) => console.log(res));
-    };
-    const getUser = () => {
-        Axios({
-            method: "GET",
-            withCredentials: true,
-            url: "http://localhost:5000/api/auth/user",
-        }).then((res) => {
-            setData(res.data);
-            console.log(res.data);
-        });
-    };
+    const {isAuthenticated, checkAuthentication} = useAuth();
+
+    const routes = useRoutes(isAuthenticated);
+
     return (
-        <div className="App">
-            <div>
-                <h1>Register</h1>
-                <input
-                    placeholder="username"
-                    onChange={(e) => setRegisterUsername(e.target.value)}
-                />
-                <input
-                    placeholder="password"
-                    onChange={(e) => setRegisterPassword(e.target.value)}
-                />
-                <button onClick={register}>Submit</button>
-            </div>
-
-            <div>
-                <h1>Login</h1>
-                <input
-                    placeholder="username"
-                    onChange={(e) => setLoginUsername(e.target.value)}
-                />
-                <input
-                    placeholder="password"
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                />
-                <button onClick={login}>Submit</button>
-            </div>
-
-            <div>
-                <h1>Get User</h1>
-                <button onClick={getUser}>Submit</button>
-                {data ? <h1>Welcome Back {data.email}</h1> : null}
-            </div>
-        </div>
+            <AuthContext.Provider value={{isAuthenticated, checkAuthentication}}>
+                <Router>
+                    {routes}
+                </Router>
+            </AuthContext.Provider>
     );
 }
 

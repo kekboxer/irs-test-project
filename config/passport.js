@@ -32,12 +32,8 @@ module.exports = function (passport) {
     });
 
     passport.deserializeUser(async function(id, done) {
-        console.log("SERE")
         await models.User.findByPk(id)
             .then(user => {
-                console.log("------")
-                console.log(user)
-                console.log("------")
                 done(null, user);
             })
     });
