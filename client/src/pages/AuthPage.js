@@ -53,7 +53,8 @@ const AuthPage = () => {
     const [loginPassword, setLoginPassword] = useState("");
     const auth = useContext(AuthContext);
 
-    const login = async () => {
+    const login = async (e) => {
+        e.preventDefault();
         try{
             await Axios({
                 method: "POST",
@@ -73,7 +74,7 @@ const AuthPage = () => {
     const classes = useStyles();
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
@@ -89,7 +90,7 @@ const AuthPage = () => {
                         required
                         fullWidth
                         id="email"
-                        label="Email Address"
+                        label="Email"
                         name="email"
                         autoComplete="email"
                         autoFocus
@@ -101,10 +102,10 @@ const AuthPage = () => {
                         required
                         fullWidth
                         name="password"
-                        label="Password"
+                        label="Пароль"
                         type="password"
-                        id="password"
                         autoComplete="current-password"
+                        id="password"
                         onChange={(e) => setLoginPassword(e.target.value)}
                     />
                     <Button
@@ -113,7 +114,7 @@ const AuthPage = () => {
                         variant="contained"
                         color="primary"
                         className={classes.submit}
-                        onClick={login}
+                        onClick={(e)=>login(e)}
                     >
                         Войти
                     </Button>

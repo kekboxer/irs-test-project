@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -9,16 +9,16 @@ import HomeIcon from '@material-ui/icons/Home';
 import ArchiveIcon from '@material-ui/icons/Archive';
 import ListItemText from '@material-ui/core/ListItemText';
 import {Link as RouterLink} from "react-router-dom";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import {AuthContext} from '../context/AuthContext'
+import Axios from "axios";
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
-    },
-    appBar: {
-        width: `calc(100% - ${drawerWidth}px)`,
-        marginLeft: drawerWidth,
     },
     drawer: {
         width: drawerWidth,
@@ -33,6 +33,12 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.default,
         padding: theme.spacing(3),
     },
+    logoutBox: {
+        position: "fixed",
+        bottom: 10,
+        left: 20,
+        width: drawerWidth-40
+    }
 }));
 
 function ListItemLink(props) {
@@ -53,8 +59,20 @@ function ListItemLink(props) {
     );
 }
 
-export default function Navbar() {
+const Navbar = () => {
     const classes = useStyles();
+    const auth = useContext(AuthContext);
+
+    const logout = () => {
+        Axios({
+            method: "GET",
+            withCredentials: true,
+            url: "http://localhost:5000/api/auth/logout",
+        })
+            .then((res) => {
+                auth.checkAuthentication();
+            });
+    }
 
     return (
         <>
@@ -66,7 +84,6 @@ export default function Navbar() {
                 }}
                 anchor="left"
             >
-                <div className={classes.toolbar} />
                 <Divider />
                 <List>
                     <ListItemLink to="/main" primary="Главная" icon={<HomeIcon />}  />
@@ -75,7 +92,12 @@ export default function Navbar() {
                 <List>
                     <ListItemLink to="/mpe_1gem" primary="Возможности поставок" icon={<ArchiveIcon />} />
                 </List>
+                <Box className={classes.logoutBox}>
+                    <Button color="primary" variant="outlined" onClick={logout} fullWidth>Выйти</Button>
+                </Box>
             </Drawer>
         </>
     );
 }
+
+export default Navbar;
