@@ -2,19 +2,25 @@ import React from "react";
 import { Switch, Route, Redirect } from 'react-router-dom';
 import AuthPage from "./pages/AuthPage";
 import Main from './pages/Main';
+import NavBar from "./components/NavBar";
 
 export const useRoutes = isAuthenticated => {
     if (isAuthenticated) {
         return (
-            <Switch>
-                <Route path="/main" exact >
-                    <Main />
-                </Route>
-                <Route path="/test" exact >
-                    <div>Exact</div>
-                </Route>
+            <>
+            <NavBar />
+                <div style={{marginLeft: 240}}>
+                    <Switch>
+                        <Route path="/main" exact >
+                            <Main />
+                        </Route>
+                        <Route path="/mpe_1gem" exact >
+                            <div>Exact</div>
+                        </Route>
+                    </Switch>
+                </div>
                 <Redirect to="/main" />
-            </Switch>
+            </>
         )
     } else {
         return (

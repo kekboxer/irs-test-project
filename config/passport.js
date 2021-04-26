@@ -28,13 +28,10 @@ module.exports = function (passport) {
 
 
     passport.serializeUser(function(user, done) {
-        done(null, user.id);
+        done(null, user);
     });
 
-    passport.deserializeUser(async function(id, done) {
-        await models.User.findByPk(id)
-            .then(user => {
-                done(null, user);
-            })
+    passport.deserializeUser(async function(user, done) {
+        done(null, user);
     });
 }

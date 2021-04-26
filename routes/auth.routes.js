@@ -32,9 +32,8 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', (req, res, next) => {
     try {
-        passport.authenticate('local',
-            function(err, user, info) {
-                console.log("USER IN ROUTES", user)
+        passport.authenticate('local', {},
+            function(err, user) {
                 return err
                     ? next(err)
                     : user
@@ -62,7 +61,9 @@ router.get('/logout',(req, res) => {
 })
 
 router.get("/user", (req, res) => {
-    res.send(req.user); // The req.user stores the entire user that has been authenticated inside of it.
+    req.user
+        ? res.send({id: req.user.id, email: req.user.email})
+        : res.send(null);
 });
 
 module.exports = router;

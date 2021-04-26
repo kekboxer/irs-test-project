@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
     "@sencha/ext-modern-runtime": "^7.3.0",
     "@sencha/ext-react-modern": "^7.3.0",
     "axios": "^0.21.1",
