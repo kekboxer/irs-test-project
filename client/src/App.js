@@ -3,18 +3,21 @@ import { useRoutes } from './routes';
 import { BrowserRouter as Router } from 'react-router-dom';
 import {useAuth} from "./auth.hook";
 import {AuthContext} from "./context/AuthContext";
+import {CircularProgress} from "@material-ui/core";
 
 function App() {
-    const {isAuthenticated, checkAuthentication} = useAuth();
+    const {isAuthenticated, checkAuthentication, isLoading} = useAuth();
 
     const routes = useRoutes(isAuthenticated);
 
     return (
-            <AuthContext.Provider value={{isAuthenticated, checkAuthentication}}>
-                <Router>
-                    {routes}
-                </Router>
-            </AuthContext.Provider>
+            !isAuthenticated && isLoading
+            ? <CircularProgress />
+            : (<AuthContext.Provider value={{isAuthenticated, checkAuthentication}}>
+                    <Router>
+                        {routes}
+                    </Router>
+                </AuthContext.Provider>)
     );
 }
 

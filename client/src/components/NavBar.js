@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -17,21 +17,12 @@ import Axios from "axios";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-    },
     drawer: {
         width: drawerWidth,
         flexShrink: 0,
     },
     drawerPaper: {
         width: drawerWidth,
-    },
-    // necessary for content to be below app bar
-    content: {
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.default,
-        padding: theme.spacing(3),
     },
     logoutBox: {
         position: "fixed",
@@ -41,27 +32,28 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function ListItemLink(props) {
-    const { icon, primary, to } = props;
-
-    const renderLink = React.useMemo(
-        () => React.forwardRef((itemProps, ref) => <RouterLink to={to} ref={ref} {...itemProps} />),
-        [to],
-    );
-
-    return (
-        <li>
-            <ListItem button component={renderLink}>
-                {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-                <ListItemText primary={primary} />
-            </ListItem>
-        </li>
-    );
-}
-
 const Navbar = () => {
     const classes = useStyles();
+    const [linkPath, setLinkPath] = useState(window.location.pathname);
     const auth = useContext(AuthContext);
+
+    const ListItemLink = (props) => {
+        const { icon, primary, to, pathToSelect } = props;
+
+        const renderLink = React.useMemo(
+            () => React.forwardRef((itemProps, ref) => <RouterLink to={to} ref={ref} {...itemProps} />),
+            [to],
+        );
+
+        return (
+            <li>
+                <ListItem button component={renderLink} selected={linkPath === pathToSelect} onClick={(event) => setLinkPath(pathToSelect)}>
+                    {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
+                    <ListItemText primary={primary} />
+                </ListItem>
+            </li>
+        );
+    }
 
     const logout = () => {
         Axios({
@@ -86,11 +78,11 @@ const Navbar = () => {
             >
                 <Divider />
                 <List>
-                    <ListItemLink to="/main" primary="Главная" icon={<HomeIcon />}  />
+                    <ListItemLink to="/dashboard" primary="Главная" icon={<HomeIcon />} pathToSelect={"/dashboard"}  />
                 </List>
                 <Divider />
                 <List>
-                    <ListItemLink to="/mpe_1gem" primary="Возможности поставок" icon={<ArchiveIcon />} />
+                    <ListItemLink to="/mpe_1gem" primary="Возможности поставок" icon={<ArchiveIcon />} pathToSelect={"/mpe_1gem"}/>
                 </List>
                 <Box className={classes.logoutBox}>
                     <Button color="primary" variant="outlined" onClick={logout} fullWidth>Выйти</Button>

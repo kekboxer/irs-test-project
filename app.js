@@ -38,38 +38,29 @@ require('./config/passport')(passport);
 
 module.exports.passport = passport;
 
+// Routes
 app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/supply', require('./routes/supply.routes'));
 
 const PORT = config.get('port') || 5000;
 
-// Test connection to Database
-dataBase.authenticate()
-    .then(() => console.log('Database connected.'))
-    .catch((e) => console.log('Error', e.message));
+// Supply connection to Database
 
-dataBase.sync()
 
-// models.R1022.findAll({
-//         where: {
-//             [Op.and]: [
-//                 sequelize.where(sequelize.fn('char_length', sequelize.col('p00')), 10),
-//                 {
-//                     p00: {
-//                         [Op.regexp]: '^(0|13)'
-//                     }
-//                 }
-//             ]
-//         }
-//     })
-//     .then(res=>{
-//         console.log(res);
-//     })
-//     .catch(err=>console.log(err));
+function start() {
+    try {
+        dataBase.authenticate()
+            .then(() => console.log('Database connected.'))
+            .catch((e) => console.log('Error', e.message));
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-})
+        dataBase.sync();
 
-app.listen(PORT, () => {
-    console.log(`Example app listening at http://localhost:${PORT}`)
-})
+        app.listen(PORT, () => {
+            console.log(`Server listening at http://localhost:${PORT}`)
+        })
+    } catch (err) {
+        console.log("Something went wrong")
+    }
+}
+
+start();

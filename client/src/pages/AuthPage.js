@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -7,10 +7,12 @@ import Link from '@material-ui/core/Link';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Axios from 'axios';
 import {AuthContext} from "../context/AuthContext";
+import {Snackbar} from "@material-ui/core";
+import * as PropTypes from "prop-types";
 
 
 function Copyright() {
@@ -46,16 +48,24 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+function Alert(props) {
+    return null;
+}
+
+Alert.propTypes = {
+    severity: PropTypes.string,
+    onClose: PropTypes.any,
+    children: PropTypes.node
+};
 const AuthPage = () => {
-    // const [registerUsername, setRegisterUsername] = useState("");
-    // const [registerPassword, setRegisterPassword] = useState("");
     const [loginUsername, setLoginUsername] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
+    const [open, setOpen] = useState(false);
     const auth = useContext(AuthContext);
 
     const login = async (e) => {
         e.preventDefault();
-        try{
+        try {
             await Axios({
                 method: "POST",
                 data: {
@@ -64,66 +74,91 @@ const AuthPage = () => {
                 },
                 withCredentials: true,
                 url: "http://localhost:5000/api/auth/login",
-            }).then(async(res)=> {
+            }).then(async (res) => {
                 auth.checkAuthentication()
             })
-        } catch (e) {}
+        } catch (e) {
+            if (e.response) {
+                if (e.response.status === 400) {
+                    setOpen(true);
+                }
+            }
+        }
 
+    };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
     };
 
     const classes = useStyles();
 
     return (
-        <Container maxWidth="xs">
-            <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                    Вход в систему
-                </Typography>
-                <form className={classes.form} noValidate>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                        onChange={(e) => setLoginUsername(e.target.value)}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Пароль"
-                        type="password"
-                        autoComplete="current-password"
-                        id="password"
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                        onClick={(e)=>login(e)}
-                    >
-                        Войти
-                    </Button>
-                </form>
-            </div>
-            <Box mt={1}>
-                <Copyright />
-            </Box>
-        </Container>
+        <div>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                open={open}
+                autoHideDuration={5000}
+                onClose={handleClose}
+                message="Неверно введенный Email или пароль"
+            />
+            <Container maxWidth="xs">
+                <CssBaseline/>
+                <div className={classes.paper}>
+                    <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon/>
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Вход в систему
+                    </Typography>
+                    <form className={classes.form} noValidate>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                            onChange={(e) => setLoginUsername(e.target.value)}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Пароль"
+                            type="password"
+                            autoComplete="current-password"
+                            id="password"
+                            onChange={(e) => setLoginPassword(e.target.value)}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}
+                            onClick={(e) => login(e)}
+                        >
+                            Войти
+                        </Button>
+                    </form>
+                </div>
+                <Box mt={1}>
+                    <Copyright/>
+                </Box>
+            </Container>
+        </div>
     );
 }
 

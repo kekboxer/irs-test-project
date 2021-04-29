@@ -1,8 +1,9 @@
 import React from "react";
 import { Switch, Route, Redirect } from 'react-router-dom';
 import AuthPage from "./pages/AuthPage";
-import Main from './pages/Main';
+import Dashboard from './pages/Dashboard';
 import NavBar from "./components/NavBar";
+import Supply from "./pages/Supply"
 
 export const useRoutes = isAuthenticated => {
     if (isAuthenticated) {
@@ -11,15 +12,15 @@ export const useRoutes = isAuthenticated => {
             <NavBar />
                 <div style={{marginLeft: 240}}>
                     <Switch>
-                        <Route path="/main" exact >
-                            <Main />
+                        <Route path="/dashboard" exact >
+                            <Dashboard />
                         </Route>
                         <Route path="/mpe_1gem" exact >
-                            <div>Exact</div>
+                            <Supply/>
                         </Route>
+                        <Redirect to="/dashboard" />
                     </Switch>
                 </div>
-                <Redirect to="/main" />
             </>
         )
     } else {

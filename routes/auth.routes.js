@@ -42,7 +42,7 @@ router.post('/login', (req, res, next) => {
                                 ? next(err)
                                 : res.status(200).json({message: "Logged in"});
                         })
-                        : res.redirect('/');
+                        : res.status(400).json({message: "Неверно введенные данные"});
             }
         )(req, res, next);
     } catch (err) {

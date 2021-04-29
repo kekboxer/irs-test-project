@@ -3,6 +3,7 @@ import Axios from "axios";
 
 export const useAuth = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const checkAuthentication =  useCallback( () => {
              Axios({
                 method: "GET",
@@ -14,6 +15,7 @@ export const useAuth = () => {
                 } else {
                     setIsAuthenticated(false);
                 }
+                setIsLoading(false);
             })
     }, [])
 
@@ -21,5 +23,5 @@ export const useAuth = () => {
         checkAuthentication()
     }, [checkAuthentication])
 
-    return { isAuthenticated, checkAuthentication };
+    return { isAuthenticated, checkAuthentication, isLoading };
 }
