@@ -1,10 +1,5 @@
 module.exports = function (sequelize, DataTypes) {
     return sequelize.define("mpe1gem", {
-            id: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                primaryKey: true
-            },
             npp: {
                 type: DataTypes.INTEGER,
                 allowNull: false,

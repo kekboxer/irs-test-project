@@ -37,7 +37,7 @@ router.get('/subjects', mustAuthenticatedMw, async (req, res, next) => {
     }
 });
 
-router.get('/subjects/:p00/organizations', async (req, res, next) => {
+router.get('/subjects/:p00/organizations', mustAuthenticatedMw, async (req, res, next) => {
     try {
         const organizations = await models.Mpe1gem.findAll({where: {r1022: req.params.p00}});
         await res.send(organizations)
@@ -46,5 +46,23 @@ router.get('/subjects/:p00/organizations', async (req, res, next) => {
     }
 })
 
+router.post('/subjects/:poo/organizations', mustAuthenticatedMw, async (req, res, next) => {
+    try {
+        const data = {...req.body}
+        const newOrganization = await models.Mpe1gem.create({...data});
+        await res.send({id: newOrganization.id})
+    } catch (err) {
+        res.status(500).json({message: "Something went wrong"});
+    }
+})
+
+router.delete('/subjects/:poo/organizations', mustAuthenticatedMw, async (req, res, next) => {
+    try {
+        await models.Mpe1gem.destroy({where: {id: req.body}});
+        res.send({message: 'Successful'})
+    } catch (err) {
+        res.status(500).json({message: "Something went wrong"});
+    }
+})
 
 module.exports = router;

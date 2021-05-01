@@ -343,6 +343,9 @@ const AddOrganizationModal = ({isOpenModal, closeModal, subjectId, submitModalFo
                     <Button variant="contained" color="primary" type="submit" form="org-data-form" onClick={(e) => {
                         e.preventDefault();
                         submitModalForm(formData);
+                        setFormData(initialFormState);
+                        setInnError(innErrorInitialState);
+                        setIsDataValid(isDataValidInitialState);
                     }}
                             disabled={isSubmitDisabled}
                             endIcon={<CheckIcon/>}>

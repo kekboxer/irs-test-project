@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const TableToolbar = ({openModal, disableSaveButton}) => {
+const TableToolbar = ({openModal, disableSaveButton, isDeleteButtonDisabled, deleteRows}) => {
     const classes = useStyles();
 
     return (
@@ -35,8 +35,9 @@ const TableToolbar = ({openModal, disableSaveButton}) => {
                 <Toolbar>
                     <Button variant="contained" color="primary" size="small" className={classes.button}
                             onClick={() => openModal()} startIcon={<AddIcon/>}>Добавить</Button>
-                    <Button variant="contained" color="secondary" size="small"
-                            className={classes.button} startIcon={<DeleteIcon/>}>Удалить</Button>
+                    <Button variant="contained" color="secondary" size="small" disabled={isDeleteButtonDisabled}
+                            className={classes.button} startIcon={<DeleteIcon/>}
+                            onClick={() => deleteRows()}>Удалить</Button>
                     <Button variant="contained" disabled={disableSaveButton} size="small"
                             className={classes.saveButton} startIcon={<SaveIcon/>}>Сохранить</Button>
                 </Toolbar>

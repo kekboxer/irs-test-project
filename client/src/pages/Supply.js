@@ -8,11 +8,6 @@ const useStyles = makeStyles((theme) => ({
     subjectsList: {
         height: "100vh",
     },
-    table: {
-        display: "inline-block",
-        width: `300px`,
-        height: "100vh",
-    }
 }));
 
 const Supply = () => {

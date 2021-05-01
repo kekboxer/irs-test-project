@@ -11,7 +11,6 @@ const Ext = window['Ext'];
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: '100%',
         paddingTop: 0,
         border: "1px solid rgba(0, 0, 0, 0.12)",
         height: "100%",
@@ -20,6 +19,12 @@ const useStyles = makeStyles((theme) => ({
 
 const Table = ({subjectId}) => {
     const [disableSaveButton, setDisableSaveButton] = useState(true);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [isDeleteButtonDisabled, setIsDeleteButtonDisabled] = useState(true);
+    const [openAlert, setOpenAlert] = React.useState({
+        isOpen: false,
+        message: ''
+    });
     const classes = useStyles();
 
     const onRecordUpdated = (newStore, record, operation, modifiedFieldNames, details) => {
@@ -28,7 +33,8 @@ const Table = ({subjectId}) => {
             if (field === 'inn') {
                 if (!isInn(record.get(field))) {
                     record.reject();
-                    setOpenAlert(true);
+                    setOpenAlert({isOpen: true, message: 'Некорректный ИНН'});
+                    console.log(openAlert)
                 }
             }
             record.commit();
@@ -44,6 +50,8 @@ const Table = ({subjectId}) => {
     }));
 
     useEffect(() => {
+        setSelectedRows([]);
+
         async function getSubjectOrg(subjectId) {
             return Axios({
                 method: "GET",
@@ -55,15 +63,19 @@ const Table = ({subjectId}) => {
         if (subjectId) {
             getSubjectOrg(subjectId).then((res) => {
                 if (res.data.length !== 0) {
-                    store.loadData(res.data)
+                    const dataToStore = res.data;
+                    for (let key in dataToStore) {
+                        if (dataToStore.hasOwnProperty(key) && dataToStore[key] === null) {
+                            dataToStore[key] = '';
+                        }
+                    }
+                    store.loadData(dataToStore);
                 } else {
-                    store.loadData([])
+                    store.loadData([]);
                 }
-            })
+            }).catch(e => console.log(e))
         }
     }, [subjectId, store])
-
-    const [openAlert, setOpenAlert] = React.useState(false);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -75,124 +87,157 @@ const Table = ({subjectId}) => {
         setIsOpenModal(false);
     }
 
-    const submitModalForm = (data) => {
-        console.log(data);
-        store.add(data)
-        setIsOpenModal(false);
+    const submitModalForm = async (newOrgData) => {
+        for (let key in newOrgData) {
+            if (key.toString().includes('cena') || key.toString().includes('max')) {
+                newOrgData[key] = newOrgData[key].replace(',', '.');
+            }
+            if (newOrgData[key] === '') {
+                newOrgData[key] = null;
+            }
+        }
+        await Axios({
+            method: "POST",
+            data: newOrgData,
+            withCredentials: true,
+            url: `http://localhost:5000/api/supply/subjects/${subjectId}/organizations`,
+        }).then((res) => {
+            for (let key in newOrgData) {
+                if (newOrgData.hasOwnProperty(key) && newOrgData[key] === null) {
+                    newOrgData[key] = '';
+                }
+            }
+            store.add({...newOrgData, id: res.data.id})
+            setOpenAlert({isOpen: true, message: 'Организация успешно добавлена'})
+            setIsOpenModal(false);
+        }).catch((err) => {
+            setOpenAlert({isOpen: true, message: 'Произошла ошибка при добавлении'})
+        })
+    }
+
+    const selectRows = (grid, records, isSelect, selectionObj) => {
+        setSelectedRows(selectionObj._selected.items.map((item) => {
+            return item.data.id
+        }));
+    }
+
+    useEffect(() => {
+        selectedRows.length === 0 ? setIsDeleteButtonDisabled(true) : setIsDeleteButtonDisabled(false)
+    }, [selectedRows])
+
+    const deleteRows = async () => {
+        await Axios({
+            method: "DELETE",
+            data: selectedRows,
+            withCredentials: true,
+            url: `http://localhost:5000/api/supply/subjects/${subjectId}/organizations`,
+        }).then((res) => {
+            selectedRows.forEach((id) => {
+                store.remove(store.findRecord('id', id));
+            })
+            setOpenAlert({isOpen: true, message: 'Организации успешно удалены'})
+            setSelectedRows([]);
+        }).catch(e => console.log(e));
     }
 
     return (
         <div className={classes.root}>
-            <TableToolbar openModal={openModal} disableSaveButton={disableSaveButton}/>
+            <TableToolbar openModal={openModal} disableSaveButton={disableSaveButton}
+                          isDeleteButtonDisabled={isDeleteButtonDisabled} deleteRows={deleteRows}/>
             <ExtGrid
-                width="100%"
                 height="91%"
                 store={store}
-                plugins={['cellediting']}
+                plugins={['cellediting', 'rowoperations']}
                 columnLines={true}
-                // listeners={{selectionchange: rowOnSelect}}
+                listeners={{selectionchange: selectRows}}
                 columns={[
                     {
                         text: "Организация-исполнитель",
-                        flex: 3,
                         menuDisabled: true,
                         columns: [{
                             text: "Наименование",
                             dataIndex: "naim_org",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }, {
                             text: "Местонахождение",
                             dataIndex: "adr_fact",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }, {
                             text: "ИНН",
                             dataIndex: "inn",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }]
                     },
                     {
                         text: "Плазма свежезамор.",
-                        flex: 2,
                         menuDisabled: true,
                         columns: [{
                             text: "Макс. об. (тыс. литров)",
                             dataIndex: "plazma_max",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }, {
                             text: "Цена (тыс. руб. за один литр)",
                             dataIndex: "plazma_cena",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }]
                     },
                     {
                         text: "Эритроцитарная масса",
-                        flex: 2,
                         menuDisabled: true,
                         columns: [{
                             text: "Макс. об. (тыс. литров)",
                             dataIndex: "erm_max",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }, {
                             text: "Цена (тыс. руб. за один литр)",
                             dataIndex: "erm_cena",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }]
                     },
                     {
                         text: "Иммуноглобулин человека",
-                        flex: 2,
                         menuDisabled: true,
                         columns: [{
                             text: "Макс. об. (тыс. литров)",
                             dataIndex: "immg_max",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }, {
                             text: "Цена (тыс. руб. за один литр)",
                             dataIndex: "immg_cena",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }]
                     },
                     {
                         text: "Альбумин 10-процентный",
-                        flex: 2,
                         menuDisabled: true,
                         columns: [{
                             text: "Макс. об. (тыс. литров)",
                             dataIndex: "alb_max",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }, {
                             text: "Цена (тыс. руб. за один литр)",
                             dataIndex: "alb_cena",
-                            flex: 1,
                             editable: true,
                             draggable: false
                         }]
                     },
                 ]}
             />
-            <Snackbar open={openAlert} autoHideDuration={3000} onClose={() => setOpenAlert(false)}
-                      message="Некорректный номер ИНН!"/>
-            <AddOrganizationModal isOpenModal={isOpenModal} closeModal={closeModal} subjectId={subjectId} submitModalForm={submitModalForm}/>
+            <Snackbar open={openAlert.isOpen} autoHideDuration={3000}
+                      onClose={() => setOpenAlert({...openAlert, isOpen: false})}
+                      message={openAlert.message}/>
+            <AddOrganizationModal isOpenModal={isOpenModal} closeModal={closeModal} subjectId={subjectId}
+                                  submitModalForm={submitModalForm}/>
         </div>
     )
 }
