@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Axios from "axios";
-import {List, ListItem, ListItemText, makeStyles} from "@material-ui/core";
+import {List, ListItem, ListSubheader, makeStyles, Typography, Divider} from "@material-ui/core";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -8,11 +9,18 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
         overflow: 'auto',
         maxHeight: "98%",
+        paddingTop: 0,
+        border: "1px solid rgba(0, 0, 0, 0.12)",
     },
+    header: {
+        backgroundColor: "#e0e0e0",
+        color: "black",
+    }
 }));
 
 const AuthoritySubjects = ({getIdFromList}) => {
     const [subjects, setSubjects] = useState([]);
+    const [selectedSubject, setSelectedSubject] = useState();
 
     const classes = useStyles();
 
@@ -33,16 +41,22 @@ const AuthoritySubjects = ({getIdFromList}) => {
 
     return (
         <List className={classes.root}>
+            <ListSubheader className={classes.header}><b>{"Субъект РФ"}</b></ListSubheader>
             {subjects.map((subject) => {
                 return (
-                    <ListItem button key={subject.p00}
-                              onClick={() => {
-                                  getIdFromList(subject.p00);
-                              }
-                              }
-                    >
-                        <ListItemText primary={subject.p01}/>
-                    </ListItem>
+                    <div key={subject.p00}>
+                        <ListItem button
+                                  onClick={() => {
+                                      getIdFromList(subject.p00);
+                                      setSelectedSubject(subject.p00);
+                                  }
+                                  }
+                                  selected={selectedSubject === subject.p00}
+                        >
+                            <Typography variant="body2" fontSize={89}>{subject.p01}</Typography>
+                        </ListItem>
+                        <Divider/>
+                    </div>
                 )
             })}
         </List>

@@ -1,16 +1,12 @@
 import React, {useState} from 'react'
-import {ExtGrid, ExtColumn} from '@sencha/ext-react-modern';
 import {makeStyles} from '@material-ui/core/styles';
 import Table from '../components/Table'
 import AuthoritySubjects from "../components/AuthoritySubjects";
 import {Grid} from "@material-ui/core";
 
-const Ext = window['Ext'];
-
 const useStyles = makeStyles((theme) => ({
     subjectsList: {
-        height: "99vh",
-        border: "1px solid rgba(0, 0, 0, 0.12)"
+        height: "100vh",
     },
     table: {
         display: "inline-block",
