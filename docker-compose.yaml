@@ -12,7 +12,7 @@ services:
     image: node_client
     build:
       context: ./client
-      dockerfile: ./
+      dockerfile: ./Dockerfile
     networks:
       - node-app
     depends_on:
@@ -24,7 +24,7 @@ services:
     image: node_server
     build:
       context: .
-      dockerfile: ./
+      dockerfile: ./Dockerfile
     networks:
       - node-app
     depends_on:
@@ -37,7 +37,7 @@ services:
     image: postgres_node
     build:
       context: ./postgres
-      dockerfile: ./
+      dockerfile: ./Dockerfile
     volumes:
       - node-postgres-data:/var/lib/postgresql/data
     environment:
