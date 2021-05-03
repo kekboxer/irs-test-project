@@ -7,7 +7,7 @@ module.exports = function (passport) {
             usernameField: 'email',
             passwordField: 'password'
         },
-        async function (username, password, done) {
+        function (username, password, done) {
             models.User.findOne({where: {email: username}})
                 .then(user => {
                     if (!user) {

@@ -1,0 +1,59 @@
+version: '3.3'
+
+volumes:
+  node-postgres-data:
+  redis-data:
+
+networks:
+  node-app:
+
+services:
+  node_client:
+    image: node_client
+    build:
+      context: ./client
+      dockerfile: ./
+    networks:
+      - node-app
+    depends_on:
+      - node_server
+    ports:
+      - 80:80
+
+  node_server:
+    image: node_server
+    build:
+      context: .
+      dockerfile: ./
+    networks:
+      - node-app
+    depends_on:
+      - database
+      - redis_node
+    ports:
+    - 5000:5000
+
+  database:
+    image: postgres_node
+    build:
+      context: ./postgres
+      dockerfile: ./
+    volumes:
+      - node-postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root936719
+      POSTGRES_DB: KPIS
+    networks:
+      - node-app
+    ports:
+      - 5433:5432
+
+  redis_node:
+    image: redis
+    volumes:
+      - redis-data:/storage/redis/data
+    ports:
+      - 6380:6379
+    networks:
+      - node-app

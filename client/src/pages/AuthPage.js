@@ -12,7 +12,6 @@ import Container from '@material-ui/core/Container';
 import Axios from 'axios';
 import {AuthContext} from "../context/AuthContext";
 import {Snackbar} from "@material-ui/core";
-import * as PropTypes from "prop-types";
 
 
 function Copyright() {
@@ -48,15 +47,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function Alert(props) {
-    return null;
-}
-
-Alert.propTypes = {
-    severity: PropTypes.string,
-    onClose: PropTypes.any,
-    children: PropTypes.node
-};
 const AuthPage = () => {
     const [loginUsername, setLoginUsername] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
@@ -73,7 +63,7 @@ const AuthPage = () => {
                     password: loginPassword,
                 },
                 withCredentials: true,
-                url: "http://localhost:5000/api/auth/login",
+                url: `http://${process.env.REACT_APP_SERVER}/api/auth/login`,
             }).then(async (res) => {
                 auth.checkAuthentication()
             })

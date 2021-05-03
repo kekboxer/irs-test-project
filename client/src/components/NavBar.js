@@ -59,7 +59,7 @@ const Navbar = () => {
         Axios({
             method: "GET",
             withCredentials: true,
-            url: "http://localhost:5000/api/auth/logout",
+            url: `http://${process.env.REACT_APP_SERVER}/api/auth/logout`,
         })
             .then((res) => {
                 auth.checkAuthentication();

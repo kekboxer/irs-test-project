@@ -3,7 +3,9 @@ const redis = require('redis')
 const RedisStore = require('connect-redis')(session);
 const config = require('config')
 
-let redisClient = redis.createClient()
+let redisClient = redis.createClient({
+    host: config.get('redis_host'),
+})
 
 module.exports = sessionMiddleware = session({
     store: new RedisStore({client: redisClient}),
@@ -12,7 +14,7 @@ module.exports = sessionMiddleware = session({
     rolling: true,
     saveUninitialized: false,
     cookie: {
-        maxAge: 10 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 1000,
         httpOnly: false,
     },
 });

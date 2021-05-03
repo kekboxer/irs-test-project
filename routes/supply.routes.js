@@ -65,4 +65,15 @@ router.delete('/subjects/:poo/organizations', mustAuthenticatedMw, async (req, r
     }
 })
 
+router.put('/subjects/:poo/organizations', mustAuthenticatedMw, async (req, res, next) => {
+    try {
+        const organization = await models.Mpe1gem.findOne({where: { id: req.body.id }})
+        organization[req.body.modified] = req.body.value;
+        await organization.save();
+        res.send({message: "Successful edited"})
+    } catch (err) {
+        res.status(500).json({message: "Something went wrong"});
+    }
+})
+
 module.exports = router;

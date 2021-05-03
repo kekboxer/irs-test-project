@@ -8,6 +8,17 @@ const useStyles = makeStyles((theme) => ({
     subjectsList: {
         height: "100vh",
     },
+    chooseWrapper: {
+        height: "100%",
+        position: "relative"
+    },
+    choose: {
+        width: "100%",
+        textAlign: "center",
+        position: "absolute",
+        top: "30%",
+        transform: "translate(0, -50%)"
+    }
 }));
 
 const Supply = () => {
@@ -26,7 +37,7 @@ const Supply = () => {
             <Grid item sm={9}>
                 {subjectId
                     ? <Table subjectId={subjectId}/>
-                    : <h1>Choose</h1>}
+                    : <div className={classes.chooseWrapper}><h2 className={classes.choose}>Выберите субъект РФ из списка слева</h2></div>}
             </Grid>
         </Grid>
     )

@@ -8,7 +8,7 @@ export const useAuth = () => {
              Axios({
                 method: "GET",
                 withCredentials: true,
-                url: "http://localhost:5000/api/auth/user",
+                url: `http://${process.env.REACT_APP_SERVER}/api/auth/user`,
             }).then((res) => {
                 if (res.data) {
                     setIsAuthenticated(true);

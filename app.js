@@ -5,16 +5,13 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
-// const sequelize = require('sequelize');
-// const { Op } = require("sequelize");
-
 const sessionMiddleware = require('./config/session');
 
 const app = express();
 
 // Database
 const dataBase = require('./config/database');
-
+console.log(dataBase)
 // Define models
 const initModels = require('./models/init-models');
 const models = initModels(dataBase);
@@ -27,7 +24,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: "http://localhost:3000", // <-- location of the react app were connecting to
+        origin: "http://localhost", // <-- location of the react app were connecting to
         credentials: true,
     })
 );
@@ -44,15 +41,18 @@ app.use('/api/supply', require('./routes/supply.routes'));
 
 const PORT = config.get('port') || 5000;
 
-// Supply connection to Database
-
-
 function start() {
     try {
-        dataBase.authenticate()
-            .then(() => console.log('Database connected.'))
-            .catch((e) => console.log('Error', e.message));
-
+        const connect = () => {
+            setTimeout(() => {
+                dataBase.authenticate()
+                    .then(() => console.log('Database connected.'))
+                    .catch((e) => {
+                        console.log('Error', e.message);
+                    });
+            }, 5000)
+        }
+        connect();
         dataBase.sync();
 
         app.listen(PORT, () => {
