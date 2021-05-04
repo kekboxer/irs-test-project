@@ -14,5 +14,3 @@ module.exports = new Sequelize('KPIS', config.get('db_username'), config.get('db
         idle: 10000
     },
 });
-
-module.exports;

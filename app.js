@@ -11,7 +11,6 @@ const app = express();
 
 // Database
 const dataBase = require('./config/database');
-console.log(dataBase)
 // Define models
 const initModels = require('./models/init-models');
 const models = initModels(dataBase);
@@ -24,8 +23,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ["http://185.248.102.164/", "localhost"],// <-- location of the react app were connecting to
-        credentials: true,
+        origin: ["http://185.248.102.164/", "http://localhost", "http://localhost:3000"],// <-- location of the react app were connecting to
+        credentials: true
     })
 );
 

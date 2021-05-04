@@ -19,6 +19,7 @@ services:
       - node_server
     ports:
       - 80:80
+    restart: always
 
   node_server:
     image: node_server
@@ -32,6 +33,7 @@ services:
       - redis_node
     ports:
     - 5000:5000
+    restart: always
 
   database:
     image: postgres_node
@@ -48,6 +50,7 @@ services:
       - node-app
     ports:
       - 5433:5432
+    restart: always
 
   redis_node:
     image: redis
@@ -55,5 +58,6 @@ services:
       - redis-data:/storage/redis/data
     ports:
       - 6380:6379
+    restart: always
     networks:
       - node-app

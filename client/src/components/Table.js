@@ -43,6 +43,9 @@ const Table = ({subjectId}) => {
             if ((modifiedFieldNames[0].includes('cena') || modifiedFieldNames[0].includes('max')) && record.data[modifiedFieldNames] === '') {
                 dataToUpdate.value = null
             }
+            if (record.data[modifiedFieldNames].includes(',')) {
+                dataToUpdate.value = dataToUpdate.value.replace(',', '.');
+            }
             await Axios({
                 method: "PUT",
                 data: dataToUpdate,
