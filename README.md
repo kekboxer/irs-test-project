@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 ## irs-test-project
-=======
-##irs-test-project
->>>>>>> master
 
 #### This is a test project for IRS.
 
