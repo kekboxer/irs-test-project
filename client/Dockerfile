@@ -1,13 +1,14 @@
-FROM node:12-alpine as build
-WORKDIR /app
-COPY package.json /app/package.json
-RUN npm install --only=prod
-COPY . /app
+FROM node:12.13.0 AS build-frontend
+WORKDIR /frontbuild
+COPY .npmrc ./
+COPY package.json ./
+RUN npm install
+COPY . .
 RUN npm run build
 
-FROM nginx:1.16.0-alpine
+FROM fholzer/nginx-brotli:v1.16.0
 WORKDIR /app
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build-frontend /build ./static/
+COPY --from=build-frontend /build/index.html ./index.html
+COPY nginx/nginx.production.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
