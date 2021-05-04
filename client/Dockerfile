@@ -1,6 +1,5 @@
 FROM node:12.13.0 AS build-frontend
 WORKDIR /frontbuild
-COPY .npmrc ./
 COPY package.json ./
 RUN npm install
 COPY . .
