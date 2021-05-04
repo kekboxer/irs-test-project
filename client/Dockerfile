@@ -7,7 +7,6 @@ RUN npm run build
 
 FROM fholzer/nginx-brotli:v1.16.0
 WORKDIR /app
-COPY --from=build-frontend /build ./static/
-COPY --from=build-frontend /build/index.html ./index.html
+COPY --from=build-frontend /frontbuild/build ./
 COPY nginx/nginx.production.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
